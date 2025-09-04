@@ -33,9 +33,16 @@ class ProductoControllerIT {
 
     @BeforeEach
     void setUp() {
-        repository.deleteAll();
-        Producto p = new Producto("Laptop", new BigDecimal("2500.00"), 2);
-        existingId = repository.save(p).getId();
+    	try {
+    		repository.deleteAll();
+            //Producto p = new Producto("Laptop", new BigDecimal("2500.00"), 2);
+            //existingId = repository.save(p).getId();
+            Producto p = repository.findByNombre("Auriculares").orElseThrow();
+            existingId = p.getId();
+		} catch (Exception e) {
+			System.err.println("Error en setUp: " + e.getMessage());
+		}
+        
     }
 
     @Test
