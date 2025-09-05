@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 class ProductoControllerIT {
-
+	
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -35,14 +35,19 @@ class ProductoControllerIT {
     void setUp() {
     	try {
     		repository.deleteAll();
-            //Producto p = new Producto("Laptop", new BigDecimal("2500.00"), 2);
-            //existingId = repository.save(p).getId();
-            Producto p = repository.findByNombre("Auriculares").orElseThrow();
+    		Producto p = new Producto();
+            p = new Producto("Laptop Pro X1", new BigDecimal("15300856"), 20);
+            repository.save(p).getId();
+            p = new Producto("Monitor Curvo 271", new BigDecimal("3500632"), 45);
+            repository.save(p).getId();
+            p = new Producto("Teclado RGB Mecánico_", new BigDecimal("320652"), 110);
+            repository.save(p).getId();
+            p = repository.findByNombre("Teclado RGB Mecánico_").orElseThrow();
             existingId = p.getId();
+            System.out.println("setUp: " + existingId);
 		} catch (Exception e) {
 			System.err.println("Error en setUp: " + e.getMessage());
-		}
-        
+		}        
     }
 
     @Test
@@ -52,23 +57,29 @@ class ProductoControllerIT {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
-    @Test
+    @SuppressWarnings("serial")
+	@Test
     void crearProductoDevuelve201() throws Exception {
-        var body = objectMapper.writeValueAsString(new java.util.HashMap<String, Object>() {{
-            put("nombre", "Auriculares");
-            put("precio", "199.99");
-            put("stock", 15);
+        var body = objectMapper.writeValueAsString(new java.util.HashMap<String, Object>() {
+
+		{
+            put("nombre", "Teclado RGB Mecánico");
+            put("precio", "320652");
+            put("stock", 110);
         }});
         mockMvc.perform(post("/productos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.nombre").value("Auriculares"));
+                .andExpect(jsonPath("$.nombre").value("Teclado RGB Mecánico"));
     }
 
     @Test
     void obtenerProductoPorIdExistenteDevuelve200() throws Exception {
+    	//Se comentarea esta linea cuando se crean los productos en @BeforeEach
+    	//existingId = repository.findByNombre("Teclado RGB Mecánico").orElseThrow().getId();
+    	System.out.println("obtenerProductoPorIdExistenteDevuelve200: " + existingId);
         mockMvc.perform(get("/productos/{id}", existingId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(existingId));
@@ -82,6 +93,9 @@ class ProductoControllerIT {
 
     @Test
     void eliminarProductoDevuelve204() throws Exception {
+    	//Se comentarea esta linea cuando se crean los productos en @BeforeEach
+    	//existingId = repository.findByNombre("Teclado RGB Mecánico").orElseThrow().getId();
+    	System.out.println("eliminarProductoDevuelve204: " + existingId);
         mockMvc.perform(delete("/productos/{id}", existingId))
                 .andExpect(status().isNoContent());
     }
