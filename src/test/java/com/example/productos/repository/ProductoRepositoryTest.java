@@ -33,7 +33,7 @@ class ProductoRepositoryTest {
     }
     
     /**
-	 * @Usuario Grupo Trabajo
+	 * @Usuario Mariana Acevedo
 	 * @Descripcion Editar un producto y buscarlo por ID
 	 */
     @Test
@@ -58,7 +58,7 @@ class ProductoRepositoryTest {
     }
     
     /**
-	 * @Usuario Grupo Trabajo
+	 * @Usuario Mariana Acevedo
 	 * @Descripcion Lista todos los productos
 	 */
     @Test
@@ -69,7 +69,7 @@ class ProductoRepositoryTest {
     }
     
     /**
-	 * @Usuario Grupo Trabajo
+	 * @Usuario Mariana Acevedo
 	 * @Descripcion Lista por nombre el producto
 	 */
     @Test
