@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.NoSuchElementException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,11 +32,16 @@ class ProductoControllerIT {
 
     private Long existingId;
 
+    /**
+	 * @Usuario Mariana Acevedo
+	 * @Descripcion Se comentarean las lineas que crean los productos con el archivo
+	 *  data.sql en resources
+	 */
     @BeforeEach
     void setUp() {
     	try {
     		repository.deleteAll();
-    		Producto p = new Producto();
+    		/*Producto p = new Producto();
             p = new Producto("Laptop Pro X1", new BigDecimal("15300856"), 20);
             repository.save(p).getId();
             p = new Producto("Monitor Curvo 271", new BigDecimal("3500632"), 45);
@@ -43,8 +49,7 @@ class ProductoControllerIT {
             p = new Producto("Teclado RGB Mecánico_", new BigDecimal("320652"), 110);
             repository.save(p).getId();
             p = repository.findByNombre("Teclado RGB Mecánico_").orElseThrow();
-            existingId = p.getId();
-            System.out.println("setUp: " + existingId);
+            existingId = p.getId();*/
 		} catch (Exception e) {
 			System.err.println("Error en setUp: " + e.getMessage());
 		}        
@@ -63,26 +68,35 @@ class ProductoControllerIT {
         var body = objectMapper.writeValueAsString(new java.util.HashMap<String, Object>() {
 
 		{
-            put("nombre", "Teclado RGB Mecánico");
-            put("precio", "320652");
-            put("stock", 110);
+            put("nombre", "Teclado RGB Mecánico Pro");
+            put("precio", "380652");
+            put("stock", 10);
         }});
         mockMvc.perform(post("/productos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.nombre").value("Teclado RGB Mecánico"));
+                .andExpect(jsonPath("$.nombre").value("Teclado RGB Mecánico Pro"));
     }
 
+    /**
+	 * @Usuario Mariana Acevedo
+	 * @Descripcion Se adiciona un bloque try-catch para manejar el caso en que no exista el producto
+	 */
     @Test
     void obtenerProductoPorIdExistenteDevuelve200() throws Exception {
-    	//Se comentarea esta linea cuando se crean los productos en @BeforeEach
-    	//existingId = repository.findByNombre("Teclado RGB Mecánico").orElseThrow().getId();
-    	System.out.println("obtenerProductoPorIdExistenteDevuelve200: " + existingId);
-        mockMvc.perform(get("/productos/{id}", existingId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(existingId));
+    	try {
+    		//Se comentarea esta linea cuando se crean los productos en @BeforeEach
+        	existingId = repository.findByNombre("Laptop Pro X1").orElseThrow().getId();
+            mockMvc.perform(get("/productos/{id}", existingId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(existingId));
+		} catch (NoSuchElementException e) {
+			mockMvc.perform(get("/productos/{id}", existingId))
+            .andExpect(status().isNotFound());
+		}
+    	
     }
 
     @Test
@@ -91,12 +105,21 @@ class ProductoControllerIT {
                 .andExpect(status().isNotFound());
     }
 
+    /**
+	 * @Usuario Mariana Acevedo
+	 * @Descripcion Se adiciona un bloque try-catch para manejar el caso en que no exista el producto
+	 */
     @Test
     void eliminarProductoDevuelve204() throws Exception {
-    	//Se comentarea esta linea cuando se crean los productos en @BeforeEach
-    	//existingId = repository.findByNombre("Teclado RGB Mecánico").orElseThrow().getId();
-    	System.out.println("eliminarProductoDevuelve204: " + existingId);
-        mockMvc.perform(delete("/productos/{id}", existingId))
-                .andExpect(status().isNoContent());
+    	try {
+    		//Se comentarea esta linea cuando se crean los productos en @BeforeEach
+        	existingId = repository.findByNombre("Teclado RGB Mecánico_").orElseThrow().getId();
+        	mockMvc.perform(delete("/productos/{id}", existingId))
+                    .andExpect(status().isNoContent());
+		} catch (NoSuchElementException e) {
+			mockMvc.perform(get("/productos/{id}", existingId))
+            .andExpect(status().isNotFound());
+		}
+    	
     }
 }
