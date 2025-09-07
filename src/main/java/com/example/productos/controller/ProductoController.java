@@ -15,42 +15,43 @@ import java.util.Map;
 @RequestMapping("/productos")
 public class ProductoController {
 
-    private final ProductoService service;
+	private final ProductoService service;
 
-    public ProductoController(ProductoService service) {
-        this.service = service;
-    }
+	public ProductoController(ProductoService service) {
+		this.service = service;
+	}
 
-    @GetMapping
-    public List<Producto> listar() {
-        return service.listar();
-    }
+	@GetMapping
+	public List<Producto> listar() {
+		return service.listar();
+	}
 
-    @PostMapping
-    public ResponseEntity<Producto> crear(@RequestBody Map<String, Object> body) {
-        String nombre = (String) body.get("nombre");
-        BigDecimal precio = new BigDecimal(body.get("precio").toString());
-        Integer stock = (Integer) body.get("stock");
-        Producto creado = service.crear(nombre, precio, stock);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-    }
+	@PostMapping
+	public ResponseEntity<Producto> crear(@RequestBody Map<String, Object> body) {
+		String nombre = (String) body.get("nombre");
+		BigDecimal precio = new BigDecimal(body.get("precio").toString());
+		Integer stock = (Integer) body.get("stock");
+		Producto creado = service.crear(nombre, precio, stock);
+		return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+	}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtener(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(service.obtenerPorId(id));
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<Producto> obtener(@PathVariable Long id) {
+		try {
+			return ResponseEntity.ok(service.obtenerPorId(id));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        try {
-            service.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+		try {
+			service.eliminar(id);
+			return ResponseEntity.noContent().build();
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
+	
 }

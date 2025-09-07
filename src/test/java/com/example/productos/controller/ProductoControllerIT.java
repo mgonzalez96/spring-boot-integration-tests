@@ -1,6 +1,5 @@
 package com.example.productos.controller;
 
-import com.example.productos.domain.Producto;
 import com.example.productos.repository.ProductoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,10 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 import java.util.NoSuchElementException;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,15 +37,6 @@ class ProductoControllerIT {
     void setUp() {
     	try {
     		repository.deleteAll();
-    		/*Producto p = new Producto();
-            p = new Producto("Laptop Pro X1", new BigDecimal("15300856"), 20);
-            repository.save(p).getId();
-            p = new Producto("Monitor Curvo 271", new BigDecimal("3500632"), 45);
-            repository.save(p).getId();
-            p = new Producto("Teclado RGB Mecánico_", new BigDecimal("320652"), 110);
-            repository.save(p).getId();
-            p = repository.findByNombre("Teclado RGB Mecánico_").orElseThrow();
-            existingId = p.getId();*/
 		} catch (Exception e) {
 			System.err.println("Error en setUp: " + e.getMessage());
 		}        
@@ -119,7 +106,8 @@ class ProductoControllerIT {
 		} catch (NoSuchElementException e) {
 			mockMvc.perform(get("/productos/{id}", existingId))
             .andExpect(status().isNotFound());
-		}
-    	
+		}    	
     }
+    
+    
 }

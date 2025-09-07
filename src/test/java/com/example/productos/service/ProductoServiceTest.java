@@ -89,6 +89,6 @@ class ProductoServiceTest {
     @Order(7)
     void editarProductoNoExistente() {
         assertThatThrownBy(() -> service.editar("iphone 15 Pro Max", new BigDecimal("1500.00"), 3))
-            .isInstanceOf(NotFoundException.class);
+            .isInstanceOf(NotFoundException.class).hasMessageContaining("Producto no encontrado");
     }
 }
