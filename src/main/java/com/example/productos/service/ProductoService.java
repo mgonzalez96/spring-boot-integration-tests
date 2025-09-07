@@ -59,13 +59,11 @@ public class ProductoService {
         if (stock <= 0) {
             throw new IllegalArgumentException("El stock no puede ser negativo o igual a cero");
         }
-        if(!repository.findByNombre(nombre).isPresent()) {
-        	Producto p = new Producto(nombre, precio, stock);            
-            return repository.save(p);        	
-        }
-        else {
-        	throw new IllegalArgumentException("El producto con nombre " + nombre + " no existe");
-        }
+        Producto producto = repository.findByNombre(nombre)
+            .orElseThrow(() -> new NotFoundException("El producto con nombre " + nombre + " no existe"));
+        producto.setPrecio(precio);
+        producto.setStock(stock);
+        return repository.save(producto);
     }
 
     public Producto obtenerPorId(Long id) {
